@@ -13,13 +13,13 @@ void push(struct Node** head_ref, int new_data)
 {
     /* 1. allocate node */
     struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
- 
+
     /* 2. put in the data  */
     new_node->data  = new_data;
- 
+
     /* 3. Make next of new node as head */
     new_node->next = (*head_ref);
- 
+
     /* 4. move the head to point to the new node */
     (*head_ref)    = new_node;
 }
@@ -85,21 +85,36 @@ void printList(struct Node *node) {
     }
 }
 
+void reverse(struct Node** head_ref, int new_data){
+    struct Node* prev = NULL;
+    struct Node* current = *head_ref;
+    struct Node* next = NULL;
+
+    while(current != NULL) {
+        next = current->next;
+        current->next = prev;
+
+        prev = current;
+        current = next;
+    }
+    *head_ref = prev;
+}
+
 
 /* Driver program to test above functions*/
 int main() {
 
     /* Start with the empty list */
     struct Node* head = NULL;
-    
-    int N, n; 
+
+    int N, n;
     char option;
-    
+
     /* Do while loop to loop through the case switches*/
     do {
 
     printf("\n--------------------------------------------------------------\n");
-    printf("\n1. Append\n2. Push\n3. InsertAfter\n4. PrintList\n5. Exit\n");
+    printf("\n1. Append\n2. Push\n3. InsertAfter\n4. PrintList\n5. ReverseList\n6. Exit \n");
     printf("\n--------------------------------------------------------------\n");
     printf("\nChoose an option: ");
     scanf(" %c", &option);
@@ -115,13 +130,12 @@ int main() {
                     scanf("%d", &n);
                     append(&head, n);
                     i++;
-                } break; 
+                } break;
 
             case '2':
                 printf("Insert a number to push to the front of the list: ");
                 scanf("%d", &n);
                 push(&head, n);
-                
                 break;
 
             case '3':
@@ -135,9 +149,17 @@ int main() {
                 printList(head);
                 printf("\n");
                 break;
+
+            case '5':
+                reverse(&head, &n);
+                printf("\nReversed List: ");
+                printList(head);
+                printf("\n");
+                break;
+
             }
 
-        } while(option != '5'); // If option == '5', exit program
-        
+        } while(option != '6'); // If option == '6', exit program
+
     return 0;
 }
