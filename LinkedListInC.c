@@ -9,7 +9,7 @@ struct Node {
 
 
 /* Given a reference (pointer to pointer) to the head of a list and an int, inserts a new node on the front of the list. */
-void push(struct Node** head_ref, int new_data)
+void push(struct Node** head, int new_data)
 {
     /* 1. allocate node */
     struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
@@ -18,10 +18,10 @@ void push(struct Node** head_ref, int new_data)
     new_node->data  = new_data;
 
     /* 3. Make next of new node as head */
-    new_node->next = (*head_ref);
+    new_node->next = (*head);
 
     /* 4. move the head to point to the new node */
-    (*head_ref)    = new_node;
+    (*head) = new_node;
 }
 
 /* Given a node prev_node, insert a new node after the given prev_node */
@@ -48,12 +48,12 @@ void insertAfter(struct Node* prev_node, int new_data) {
 }
 
 /* Given a reference (pointer to pointer) to the head of a list and an int, appends a new node at the end  */
-void append(struct Node** head_ref, int new_data) {
+void append(struct Node** head, int new_data) {
 
     /* 1. allocate node */
     struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
 
-    struct Node *last = *head_ref;
+    struct Node *last = *head;
 
     /* 2. put in the data  */
     new_node->data = new_data;
@@ -62,8 +62,8 @@ void append(struct Node** head_ref, int new_data) {
     new_node->next = NULL;
 
     /* 4. If the Linked List is empty, then make the new node as head */
-    if (*head_ref == NULL) {
-        *head_ref = new_node;
+    if (*head == NULL) {
+        *head = new_node;
         return;
     }
 
@@ -85,9 +85,9 @@ void printList(struct Node *node) {
     }
 }
 
-void reverse(struct Node** head_ref, int new_data){
+void reverse(struct Node** head){
     struct Node* prev = NULL;
-    struct Node* current = *head_ref;
+    struct Node* current = *head;
     struct Node* next = NULL;
 
     while(current != NULL) {
@@ -97,7 +97,36 @@ void reverse(struct Node** head_ref, int new_data){
         prev = current;
         current = next;
     }
-    *head_ref = prev;
+    *head = prev;
+}
+
+void deleteNode(struct Node** head, int new_data) {
+
+    struct Node* current = *head, *prev;
+
+    /* Check if head node == input */
+    if (current != NULL && current->data == new_data) {
+        *head = current->next;
+        free(current); // Free memory
+        return;
+    }
+
+    /* Search for the input to be deleted */
+    while (current != NULL && current->data != new_data) {
+        prev = current;
+        current = current->next;
+    }
+
+    /* Checks if inputs is in the list */
+    if (current == NULL) {
+        printf("%d is not in the list.\n", new_data);
+        return;
+    }
+
+    /* Unlinks the node from the list and deletes the node */
+    prev->next = current->next;
+    free(current);
+
 }
 
 
@@ -114,7 +143,7 @@ int main() {
     do {
 
     printf("\n--------------------------------------------------------------\n");
-    printf("\n1. Append\n2. Push\n3. InsertAfter\n4. PrintList\n5. ReverseList\n6. Exit \n");
+    printf("\n1. Append\n2. Push\n3. InsertAfterPrev\n4. PrintList\n5. ReverseList\n6. DeleteNode\nq. Exit \n");
     printf("\n--------------------------------------------------------------\n");
     printf("\nChoose an option: ");
     scanf(" %c", &option);
@@ -126,7 +155,7 @@ int main() {
 
                 int i = 0;
                 while (i < N) {
-                    printf("Insert an a number to append tp the end of the list: ");
+                    printf("Insert an a number to append to the end of the list: ");
                     scanf("%d", &n);
                     append(&head, n);
                     i++;
@@ -151,15 +180,21 @@ int main() {
                 break;
 
             case '5':
-                reverse(&head, &n);
-                printf("\nReversed List: ");
-                printList(head);
-                printf("\n");
+                reverse(&head);
+                printf("\nList has been reversed.\n");
+                
                 break;
+            
+            case '6':
+            printf("Insert the node to be deleted: ");
+            scanf("%d", &n);
+            deleteNode(&head, n);
+            break;
+
 
             }
 
-        } while(option != '6'); // If option == '6', exit program
+        } while(option != 'q'); // If option == '6', exit program
 
     return 0;
 }
